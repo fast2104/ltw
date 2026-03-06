@@ -1,79 +1,42 @@
-class Student {
-    constructor(maSV, hoTen, ngaySinh, lopHoc, gpa) {
-        this.maSV = maSV;
-        this.hoTen = hoTen;
-        this.ngaySinh = ngaySinh;
-        this.lopHoc = lopHoc;
-        this.gpa = gpa;
-    }
-    updateInfo(newData) {
-        this.maSV = newData.maSV;
-        this.hoTen = newData.hoTen;
-        this.ngaySinh = newData.ngaySinh;
-        this.lopHoc = newData.lopHoc;
-        this.gpa = newData.gpa;
-    }
-}
-let students = [];
-const studentForm = document.getElementById('studentForm');
-const studentTableBody = document.getElementById('studentTableBody');
-const submitBtn = document.getElementById('submitBtn');
-const editIndexInput = document.getElementById('editIndex');
+// Hàm điều hướng chính để chuyển đổi giữa các màn hình
+function navigateTo(pageName) {
+    // 1. Ẩn tất cả các trang
+    const pages = document.querySelectorAll('.page');
+    pages.forEach(p => p.classList.remove('active'));
 
-function renderTable() {
-    studentTableBody.innerHTML = '';
-    students.forEach((student, index) => {
-        const row = `
-            <tr>
-                <td>${student.maSV}</td>
-                <td>${student.hoTen}</td>
-                <td>${student.ngaySinh}</td>
-                <td>${student.lopHoc}</td>
-                <td>${student.gpa}</td>
-                <td>
-                    <button class="btn btn-sm btn-edit" onclick="editStudent(${index})">Sửa</button>
-                </td>
-            </tr>
-        `;
-        studentTableBody.innerHTML += row;
-    });
+    // 2. Hiện trang đích
+    const targetPage = document.getElementById('page-' + pageName);
+    if (targetPage) targetPage.classList.add('active');
+
+    // 3. Cập nhật nút trên Header tùy theo trang
+    renderHeader(pageName);
 }
 
-studentForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const data = {
-        maSV: document.getElementById('maSV').value,
-        hoTen: document.getElementById('hoTen').value,
-        ngaySinh: document.getElementById('ngaySinh').value,
-        lopHoc: document.getElementById('lopHoc').value,        gpa: document.getElementById('gpa').value
-    };
-
-    const editIndex = parseInt(editIndexInput.value);
-
-    if (editIndex === -1) {
-        const newStudent = new Student(data.maSV, data.hoTen, data.ngaySinh, data.lopHoc, data.gpa);
-        students.push(newStudent);
+function renderHeader(pageName) {
+    const headerRight = document.getElementById('header-right');
+    
+    if (pageName === 'student-login') {
+        headerRight.innerHTML = `<button class="btn-outline-white" onclick="navigateTo('admin-login')">Admin UI</button>`;
+    } else if (pageName === 'admin-login') {
+        headerRight.innerHTML = `<button class="btn-outline-white" onclick="navigateTo('student-login')">Student UI</button>`;
     } else {
-        students[editIndex].updateInfo(data);
-        editIndexInput.value = "-1";
-        submitBtn.innerText = "Thêm Sinh viên";
-        submitBtn.classList.replace('btn-success', 'btn-primary');
+        headerRight.innerHTML = `<button class="btn-outline-white" onclick="navigateTo('student-login')">Log out</button>`;
     }
+}
 
-    studentForm.reset();
-    renderTable();
-});
+// Khởi chạy khi web load xong
+function main() {
+    navigateTo('student-login');
+}
 
-window.editStudent = function(index) {
-    const s = students[index];
-    document.getElementById('maSV').value = s.maSV;
-    document.getElementById('hoTen').value = s.hoTen;
-    document.getElementById('ngaySinh').value = s.ngaySinh;
-    document.getElementById('lopHoc').value = s.lopHoc;
-    document.getElementById('gpa').value = s.gpa;
+// Thêm CSS cho nút trắng trên header
+const style = document.createElement('style');
+style.innerHTML = `
+    .btn-outline-white {
+        background: white; color: var(--ptit-red); border: none;
+        padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;
+    }
+`;
+document.head.appendChild(style);
 
-    editIndexInput.value = index;
-    submitBtn.innerText = "Lưu cập nhật";
-    submitBtn.classList.replace('btn-primary', 'btn-success');
-};
+window.onload = main;
