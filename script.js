@@ -1,14 +1,9 @@
 // Hàm điều hướng chính để chuyển đổi giữa các màn hình
 function navigateTo(pageName) {
-    // 1. Ẩn tất cả các trang
     const pages = document.querySelectorAll('.page');
     pages.forEach(p => p.classList.remove('active'));
-
-    // 2. Hiện trang đích
     const targetPage = document.getElementById('page-' + pageName);
     if (targetPage) targetPage.classList.add('active');
-
-    // 3. Cập nhật nút trên Header tùy theo trang
     renderHeader(pageName);
 }
 
@@ -24,12 +19,9 @@ function renderHeader(pageName) {
     }
 }
 
-// Khởi chạy khi web load xong
 function main() {
     navigateTo('student-login');
 }
-
-// Thêm CSS cho nút trắng trên header
 const style = document.createElement('style');
 style.innerHTML = `
     .btn-outline-white {
